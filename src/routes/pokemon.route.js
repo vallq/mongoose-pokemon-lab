@@ -96,4 +96,13 @@ router.delete(
   })
 );
 
+// router.use((err, req, res, next) => {
+//   if (err.name === "ValidateionError") {
+//     err.statusCode = 400;
+//   } else if (err.name === "MongoError" && err.code === 11000) {
+//     err.statusCode = 422;
+//   }
+//   next(err);
+// }); need to check why this results in the async not completing
+
 module.exports = router;
