@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon src/index.js",
     "start-db": "mongod --dbpath ~data/db",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "web": "npm run start"
   },
   "keywords": [],
   "author": "",
