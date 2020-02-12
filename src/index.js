@@ -3,8 +3,11 @@ require("./utils/db");
 const PORT = 3000;
 const app = require("./app");
 
-app.listen(PORT, () => {
-  console.log(`You are on the server on http://localhost:${PORT}`);
+// const server = app.listen(PORT, () => {
+//   console.log(`You are on the server on http://localhost:${PORT}`);
+// });
+const server = app.listen(process.env.PORT || PORT, () => {
+  console.log(`Express app started on http://localhost:${PORT}`);
 });
 
 // const BasicPokemon = require("./models/pokemon.model.js");
