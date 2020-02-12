@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon src/index.js",
+    "start": "node src/index.js",
     "start-db": "mongod --dbpath ~data/db",
     "test": "jest --runInBand",
     "web": "npm run start"
