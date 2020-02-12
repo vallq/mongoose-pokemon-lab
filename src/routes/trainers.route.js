@@ -13,6 +13,7 @@ router.post("/", async (req, res, next) => {
     const newTrainer = await trainer.save();
     res.status(201).send(newTrainer);
   } catch (err) {
+    err.message = "Trainer Validation Error";
     next(err);
   }
 });
