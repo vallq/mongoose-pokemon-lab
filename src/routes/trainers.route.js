@@ -11,7 +11,7 @@ router.post("/", async (req, res, next) => {
     const trainer = new Trainer(req.body);
     await Trainer.init();
     const newTrainer = await trainer.save();
-    res.send(newTrainer);
+    res.status(201).send(newTrainer);
   } catch (err) {
     next(err);
   }
@@ -63,7 +63,7 @@ router.post("/login", async (req, res, next) => {
 
     res.send("You are now logged in!");
   } catch (err) {
-    if (err.message === "Login failed") {
+    if (err.message === "Login Failed") {
       err.statusCode = 400;
     }
     next(err);
@@ -71,15 +71,17 @@ router.post("/login", async (req, res, next) => {
 });
 
 router.get("/:username", protectRoute, async (req, res, next) => {
+  const INCORRECT_ERR = "Incorrect user"
   try {
     const username = req.params.username;
     if (req.user.name !== username) {
-      throw new Error("Incorrect user");
+      throw new Error(INCORRECT_ERR);
     }
-    const regex = new RegExp(username, "gi");
-    const trainers = await Trainer.find({ username: regex });
+    //const regex = new RegExp(username, "gi");
+    const trainers = await Trainer.find({ username });
     res.send(trainers);
   } catch (err) {
+    err.message = INCORRECT_ERR;
     err.statusCode = 403;
     next(err);
   }

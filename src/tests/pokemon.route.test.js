@@ -3,6 +3,10 @@ const app = require("../app.js");
 const Pokemon = require("../models/pokemon.model.js");
 const mongoose = require("mongoose");
 const { MongoMemoryServer } = require("mongodb-memory-server");
+const jwt = require("jsonwebtoken");
+
+
+jest.mock("jsonwebtoken");
 
 describe("pokemon", () => {
   let mongoServer;
@@ -48,6 +52,7 @@ describe("pokemon", () => {
   });
 
   afterEach(async () => {
+    jest.resetAllMocks();
     await Pokemon.deleteMany();
   });
 
@@ -114,6 +119,8 @@ describe("pokemon", () => {
     });
 
     it("3 POST / should respond with newly inserted Pokemon", async () => {
+      jwt.verify.mockReturnValueOnce({});
+
       const expectedPokemon = {
         id: 3,
         name: "Charmander",
@@ -123,6 +130,7 @@ describe("pokemon", () => {
       };
       const { body: actualPokemons } = await request(app)
         .post("/pokemon")
+        .set("Cookie", "token=valid-token")
         .send(expectedPokemon)
         .expect(201);
       expect(actualPokemons).toMatchObject(expectedPokemon);
