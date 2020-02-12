@@ -42,6 +42,8 @@ describe("trainers", () => {
       }
     ];
     await Trainer.create(trainerData);
+    // jest.spyOn(console, "error");
+    // console.error.mockReturnValue(() => {});
   });
 
   afterEach(async () => {
@@ -62,6 +64,18 @@ describe("trainers", () => {
       expect(trainer.username).toBe(expectedTrainer.username);
       expect(trainer.password).not.toBe(expectedTrainer.password);
     });
+
+    // it("POST / should not add a new trainer when password is less than 8 characters", async() => {
+    //   const wrongTrainer = {
+    //     username: "ash1",
+    //     password: "1Wanna"
+    //   };
+    //   const { body: trainer } = await request(app)
+    //     .post("/trainers")
+    //     .send(wrongTrainer)
+    //     .expect(400);
+    //     expect(error.error).toContain("Trainer validation failed");
+    // });
   });
   it("GET / should return all trainers when retrieved", () => {});
   describe("/trainers/:username", () => {
@@ -74,6 +88,7 @@ describe("trainers", () => {
         .get(`/trainers/${expectedTrainer.username}`)
         .set("Cookie", "token=valid-token")
         .expect(200);
+      expect(jwt.verify).toHaveBeenCalledTimes(1);
       expect(trainer[0]).toMatchObject(expectedTrainer);
     });
 
@@ -87,6 +102,30 @@ describe("trainers", () => {
         .set("Cookie", "token=valid-token")
         .expect(403);
       expect(error).toEqual({ error: "Incorrect user" });
+    });
+
+    it("GET / should deny access when there is no token provided", async () => {
+      const { body: error } = await request(app)
+        .get("/trainers/ash2")
+        .expect(401);
+      expect(jwt.verify).not.toHaveBeenCalled();
+      expect(error).toMatchObject({
+        error: "You are not authorized to be here!"
+      });
+    });
+
+    it("GET / should deny access when the token provided is invalid", async () => {
+      jwt.verify.mockImplementationOnce(() => {
+        throw new Error;
+      })
+      const { body: error } = await request(app)
+        .get("/trainers/ash2")
+        .set("Cookie", "token=invalid-token")
+        .expect(401);
+      expect(jwt.verify).toHaveBeenCalledTimes(1);
+      expect(error).toMatchObject({
+        error: "You are not authorized to be here!"
+      });
     });
   });
   describe("/trainers/login", () => {
@@ -111,7 +150,7 @@ describe("trainers", () => {
         .post("/trainers/login")
         .send(incorrectTrainer)
         .expect(400);
-      expect(incorrectMessage).toEqual({"error": "Login Failed"});
+      expect(incorrectMessage).toEqual({ error: "Login Failed" });
     });
   });
 });
