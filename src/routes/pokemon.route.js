@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Pokemon = require("../models/pokemon.model.js");
 const wrapAsync = require("../utils/wrapAsync.js");
+const { protectRoute } = require("../middleware/auth");
 
 const filterByName = async name => {
   const nameFilterRegex = new RegExp(name, "gi");
@@ -34,7 +35,7 @@ router.get(
 
 //3: "POST    /pokemons",
 router.post(
-  "/",
+  "/", protectRoute, 
   wrapAsync(async (req, res, next) => {
     const pokemon = new Pokemon(req.body);
     await Pokemon.init(); //make sure the indexes are done building;

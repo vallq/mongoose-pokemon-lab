@@ -28,7 +28,7 @@ app.get("/", (req, res) => {
 app.use((err, req, res, next) => {
   res.status(err.statusCode || 500);
   console.log(err);
-  if (err.status) {
+  if (err.statusCode) {
     res.send({ error: err.message });
   } else {
     res.send({ error: "internal server error" });
